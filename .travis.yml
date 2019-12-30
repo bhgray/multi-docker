@@ -22,4 +22,15 @@ after_success:
     - docker push bhgray/multi-server 
     - docker push bhgray/multi-worker 
 
+deploy:
+    provider: elasticbeanstalk
+    region: US-EAST-1
+    app: multi-docker
+    env: MultiDocker-env
+    bucket_name: elasticbeanstalk-us-east-1-117214242521
+    bucker_path: docker-multi
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
 
