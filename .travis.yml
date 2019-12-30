@@ -1,0 +1,25 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build -t bhgray/react-test -f ./client/Dockerfile.dev ./client
+    
+script:
+    - docker run -e CI=true bhgray/react-test npm run test
+        
+after_success:
+    - docker build -t bhgray/multi-client ./client
+    - docker build -t bhgray/multi-nginx ./nginx
+    - docker build -t bhgray/multi-server ./server
+    - docker build -t bhgray/multi-worker ./worker
+    # log into docker hub; remember to set the DOCKER_PASSWORD and DOCKER_ID environment variables
+    # in the travis-ci build settings on the website
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # push the images
+    - docker push bhgray/multi-client 
+    - docker push bhgray/multi-nginx 
+    - docker push bhgray/multi-server 
+    - docker push bhgray/multi-worker 
+
+
